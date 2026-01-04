@@ -42,12 +42,13 @@ export async function POST(request: Request) {
     }
 
     // Create profile entry
+    // @ts-ignore - Supabase type inference issue in strict mode
     const { error: profileError } = await supabase.from('profiles').insert({
       id: newUser.user.id,
       email,
       full_name,
       role,
-    } as any)
+    })
 
     if (profileError) {
       // Rollback: delete the auth user if profile creation fails

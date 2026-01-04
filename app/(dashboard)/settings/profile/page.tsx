@@ -77,12 +77,13 @@ export default function ProfilePage() {
         return
       }
 
+      // @ts-ignore - Supabase type inference issue in strict mode
       const { error: updateError } = await supabase
         .from('profiles')
         .update({
           full_name: formData.full_name,
           updated_at: new Date().toISOString(),
-        } as any)
+        })
         .eq('id', user.id)
 
       if (updateError) {

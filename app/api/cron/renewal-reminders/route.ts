@@ -82,23 +82,25 @@ export async function GET(request: Request) {
       if (emailResult.success) {
         results.sent++
         // Log email in database
+        // @ts-ignore - Supabase type inference issue in strict mode
         await supabase.from('email_logs').insert({
           admission_id: admission.id,
           email_type: 'reminder',
           recipient: admission.email,
           subject: `Renewal Reminder - ${admission.admission_number}`,
           status: 'sent',
-        } as any)
+        })
       } else {
         results.failed++
         // Log failed email
+        // @ts-ignore - Supabase type inference issue in strict mode
         await supabase.from('email_logs').insert({
           admission_id: admission.id,
           email_type: 'reminder',
           recipient: admission.email,
           subject: `Renewal Reminder - ${admission.admission_number}`,
           status: 'failed',
-        } as any)
+        })
       }
 
       // Add a small delay to avoid rate limiting

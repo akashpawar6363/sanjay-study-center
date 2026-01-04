@@ -219,11 +219,12 @@ export async function GET(request: Request) {
     }
 
     // Log email in database
+    // @ts-ignore - Supabase type inference issue in strict mode
     await supabase.from('email_logs').insert({
       email_type: 'admin_report',
       recipient_email: adminProfile.email,
       status: 'sent',
-    } as any)
+    })
 
     return NextResponse.json({
       message: 'Expiring admissions report sent to admin',

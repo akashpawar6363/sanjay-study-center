@@ -50,13 +50,14 @@ export async function POST(request: Request) {
 
     const body = await request.json()
 
+    // @ts-ignore - Supabase type inference issue in strict mode
     const { data: category, error } = await supabase
       .from('categories')
       .insert({
         name: body.name,
         rate: body.rate,
         is_default: false,
-      } as any)
+      })
       .select()
       .single()
 
@@ -98,13 +99,14 @@ export async function PUT(request: Request) {
 
     const body = await request.json()
 
+    // @ts-ignore - Supabase type inference issue in strict mode
     const { data: category, error } = await supabase
       .from('categories')
       .update({
         name: body.name,
         rate: body.rate,
         updated_at: new Date().toISOString(),
-      } as any)
+      })
       .eq('id', body.id)
       .select()
       .single()

@@ -79,6 +79,7 @@ export async function PUT(
     )
 
     // Update admission
+    // @ts-ignore - Supabase type inference issue in strict mode
     const { data: admission, error: updateError } = await supabase
       .from('admissions')
       .update({
@@ -94,7 +95,7 @@ export async function PUT(
         payment_mode: body.payment_mode,
         status: body.status,
         updated_at: new Date().toISOString(),
-      } as any)
+      })
       .eq('id', params.id)
       .select('*, category:categories(*)')
       .single()

@@ -89,6 +89,7 @@ export async function POST(request: Request) {
       .single()
 
     // Create admission
+    // @ts-ignore - Supabase type inference issue in strict mode
     const { data: admission, error: admissionError } = await supabase
       .from('admissions')
       .insert({
@@ -107,7 +108,7 @@ export async function POST(request: Request) {
         digital_signature_url: userProfile?.digital_signature_url,
         created_by: user.id,
         status: 'active',
-      } as any)
+      })
       .select('*, category:categories(*)')
       .single()
 
@@ -117,9 +118,10 @@ export async function POST(request: Request) {
     }
 
     // Update receipt number
+    // @ts-ignore - Supabase type inference issue in strict mode
     await supabase
       .from('settings')
-      .update({ value: nextNumber.toString() } as any)
+      .update({ value: nextNumber.toString() })
       .eq('key', 'current_receipt_number')
 
     // Send admission receipt email

@@ -87,12 +87,13 @@ export async function POST(request: Request) {
     const updateField =
       fileType === 'profile_photo' ? 'profile_photo_url' : 'digital_signature_url'
 
+    // @ts-ignore - Supabase type inference issue in strict mode
     const { error: updateError } = await supabase
       .from('profiles')
       .update({
         [updateField]: publicUrl,
         updated_at: new Date().toISOString(),
-      } as any)
+      })
       .eq('id', userId)
 
     if (updateError) {
@@ -165,12 +166,13 @@ export async function DELETE(request: Request) {
     const updateField =
       fileType === 'profile_photo' ? 'profile_photo_url' : 'digital_signature_url'
 
+    // @ts-ignore - Supabase type inference issue in strict mode
     await supabase
       .from('profiles')
       .update({
         [updateField]: null,
         updated_at: new Date().toISOString(),
-      } as any)
+      })
       .eq('id', userId)
 
     return NextResponse.json({ message: 'File deleted successfully' })
