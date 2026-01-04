@@ -1,6 +1,8 @@
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
 import { calculateRenewalDate } from '@/lib/utils/dateUtils'
+import { sendEmail } from '@/lib/email/mailer'
+import { getAdmissionReceiptTemplate } from '@/lib/email/templates/admission-receipt'
 
 // GET - Get single admission
 export async function GET(
@@ -89,6 +91,7 @@ export async function PUT(
         student_name: body.student_name,
         email: body.email,
         fees: body.fees,
+        discount: body.discount || 0,
         mobile_number: body.mobile_number,
         payment_mode: body.payment_mode,
         status: body.status,
@@ -101,6 +104,38 @@ export async function PUT(
     if (updateError) {
       console.error('Error updating admission:', updateError)
       return NextResponse.json({ error: updateError.message }, { status: 500 })
+    }
+
+    // Get user's digital signature for the email
+    const { data: userProfile } = await supabase
+      .from('profiles')
+      .select('digital_signature_url')
+      .eq('id', user.id)
+      .single()
+
+    // Send updated admission receipt email
+    try {
+      const emailHtml = getAdmissionReceiptTemplate({
+        studentName: admission.student_name,
+        admissionNumber: admission.seat_no.toString(),
+        receiptNumber: admission.receipt_no,
+        category: admission.category.name,
+        categoryFee: admission.fees,
+        startDate: admission.admission_date,
+        renewalDate: admission.renewal_date,
+        mobileNumber: admission.mobile_number,
+        paymentMode: admission.payment_mode,
+        digitalSignatureUrl: userProfile?.digital_signature_url || admission.digital_signature_url,
+      })
+
+      await sendEmail({
+        to: admission.email,
+        subject: `📝 Updated Admission Receipt - ${admission.receipt_no}`,
+        html: emailHtml,
+      })
+    } catch (emailError) {
+      console.error('Error sending updated admission receipt email:', emailError)
+      // Don't fail the update if email fails
     }
 
     return NextResponse.json({ admission })
