@@ -8,6 +8,7 @@ import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import { Upload, X, User, FileSignature } from 'lucide-react'
 import Image from 'next/image'
+import { Profile } from '@/types/user.types'
 
 export default function ProfilePage() {
   const router = useRouter()
@@ -41,7 +42,7 @@ export default function ProfilePage() {
           .from('profiles')
           .select('*')
           .eq('id', user.id)
-          .single()
+          .single() as { data: Profile | null }
 
         if (profileData) {
           setProfile(profileData)
