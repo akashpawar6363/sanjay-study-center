@@ -1,12 +1,13 @@
-import { createClient } from '@/lib/supabase/server'
+import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
+import { createClient } from '@supabase/supabase-js'
 
 export async function DELETE(
   request: Request,
   { params }: { params: { id: string } }
 ) {
   try {
-    const supabase = await createClient()
+    const supabase = await createServerSupabaseClient()
 
     // Check if current user is admin
     const {
@@ -43,10 +44,23 @@ export async function DELETE(
       )
     }
 
+    // Create Supabase Admin client with service role key
+    const supabaseAdmin = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
+      {
+        auth: {
+          autoRefreshToken: false,
+          persistSession: false
+        }
+      }
+    )
+
     // Delete user using Supabase Admin API
-    const { error: deleteError } = await supabase.auth.admin.deleteUser(userId)
+    const { error: deleteError } = await supabaseAdmin.auth.admin.deleteUser(userId)
 
     if (deleteError) {
+      console.error('Delete error:', deleteError)
       return NextResponse.json({ error: deleteError.message }, { status: 400 })
     }
 
@@ -55,6 +69,8 @@ export async function DELETE(
     return NextResponse.json({ message: 'User deleted successfully' })
   } catch (error) {
     console.error('Error deleting user:', error)
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+    return NextResponse.json({ 
+      error: error instanceof Error ? error.message : 'Internal server error' 
+    }, { status: 500 })
   }
 }

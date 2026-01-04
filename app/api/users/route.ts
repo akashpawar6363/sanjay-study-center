@@ -1,9 +1,10 @@
-import { createClient } from '@/lib/supabase/server'
+import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
+import { createClient } from '@supabase/supabase-js'
 
 export async function POST(request: Request) {
   try {
-    const supabase = await createClient()
+    const supabase = await createServerSupabaseClient()
 
     // Check if current user is admin
     const {
@@ -26,8 +27,25 @@ export async function POST(request: Request) {
 
     const { email, full_name, password, role = 'coordinator' } = await request.json()
 
+    // Validate inputs
+    if (!email || !password || !full_name) {
+      return NextResponse.json({ error: 'Email, password, and full name are required' }, { status: 400 })
+    }
+
+    // Create Supabase Admin client with service role key
+    const supabaseAdmin = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
+      {
+        auth: {
+          autoRefreshToken: false,
+          persistSession: false
+        }
+      }
+    )
+
     // Create user using Supabase Admin API
-    const { data: newUser, error: signUpError } = await supabase.auth.admin.createUser({
+    const { data: newUser, error: signUpError } = await supabaseAdmin.auth.admin.createUser({
       email,
       password,
       email_confirm: true,
@@ -37,11 +55,16 @@ export async function POST(request: Request) {
     })
 
     if (signUpError) {
+      console.error('Sign up error:', signUpError)
       return NextResponse.json({ error: signUpError.message }, { status: 400 })
     }
 
+    if (!newUser.user) {
+      return NextResponse.json({ error: 'Failed to create user' }, { status: 400 })
+    }
+
     // Create profile entry
-    const { error: profileError } = await supabase.from('profiles').insert({
+    const { error: profileError } = await supabaseAdmin.from('profiles').insert({
       id: newUser.user.id,
       email,
       full_name,
@@ -49,8 +72,9 @@ export async function POST(request: Request) {
     })
 
     if (profileError) {
+      console.error('Profile error:', profileError)
       // Rollback: delete the auth user if profile creation fails
-      await supabase.auth.admin.deleteUser(newUser.user.id)
+      await supabaseAdmin.auth.admin.deleteUser(newUser.user.id)
       return NextResponse.json({ error: profileError.message }, { status: 400 })
     }
 
@@ -68,6 +92,8 @@ export async function POST(request: Request) {
     )
   } catch (error) {
     console.error('Error creating user:', error)
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+    return NextResponse.json({ 
+      error: error instanceof Error ? error.message : 'Internal server error' 
+    }, { status: 500 })
   }
 }
