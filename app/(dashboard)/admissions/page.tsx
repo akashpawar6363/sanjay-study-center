@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/Button'
 import Link from 'next/link'
 import { Plus } from 'lucide-react'
 import { AdmissionList } from '@/components/admissions/AdmissionList'
+import { Profile } from '@/types/user.types'
 
 export default async function AdmissionsPage() {
   const supabase = await createServerSupabaseClient()
@@ -22,6 +23,10 @@ export default async function AdmissionsPage() {
     .select('*')
     .eq('id', user.id)
     .single()
+
+  if (!profile) {
+    return <div>Profile not found</div>
+  }
 
   // Get all admissions with category details
   const { data: admissions } = await supabase
@@ -47,7 +52,7 @@ export default async function AdmissionsPage() {
       <Card className="p-6">
         <AdmissionList 
           admissions={admissions || []} 
-          userRole={profile?.role || 'coordinator'}
+          userRole={profile.role || 'coordinator'}
         />
       </Card>
     </div>
