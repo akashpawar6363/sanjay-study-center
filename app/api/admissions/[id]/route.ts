@@ -1,5 +1,4 @@
 import { createServerSupabaseClient } from '@/lib/supabase/server'
-import { Database } from '@/types/supabase'
 import { NextResponse } from 'next/server'
 import { calculateRenewalDate } from '@/lib/utils/dateUtils'
 
@@ -79,7 +78,6 @@ export async function PUT(
     )
 
     // Update admission
-    // @ts-ignore - Supabase type inference issue in strict mode
     const { data: admission, error: updateError } = await supabase
       .from('admissions')
       .update({

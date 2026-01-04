@@ -1,5 +1,4 @@
 import { createClient } from '@/lib/supabase/server'
-import { Database } from '@/types/supabase'
 import { NextResponse } from 'next/server'
 
 export async function POST(request: Request) {
@@ -87,7 +86,6 @@ export async function POST(request: Request) {
     const updateField =
       fileType === 'profile_photo' ? 'profile_photo_url' : 'digital_signature_url'
 
-    // @ts-ignore - Supabase type inference issue in strict mode
     const { error: updateError } = await supabase
       .from('profiles')
       .update({
@@ -166,7 +164,6 @@ export async function DELETE(request: Request) {
     const updateField =
       fileType === 'profile_photo' ? 'profile_photo_url' : 'digital_signature_url'
 
-    // @ts-ignore - Supabase type inference issue in strict mode
     await supabase
       .from('profiles')
       .update({

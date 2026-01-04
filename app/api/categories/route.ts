@@ -1,5 +1,4 @@
 import { createServerSupabaseClient } from '@/lib/supabase/server'
-import { Database } from '@/types/supabase'
 import { NextResponse } from 'next/server'
 
 // GET - List all categories
@@ -50,7 +49,6 @@ export async function POST(request: Request) {
 
     const body = await request.json()
 
-    // @ts-ignore - Supabase type inference issue in strict mode
     const { data: category, error } = await supabase
       .from('categories')
       .insert({
@@ -99,7 +97,6 @@ export async function PUT(request: Request) {
 
     const body = await request.json()
 
-    // @ts-ignore - Supabase type inference issue in strict mode
     const { data: category, error } = await supabase
       .from('categories')
       .update({

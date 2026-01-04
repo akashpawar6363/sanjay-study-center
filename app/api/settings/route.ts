@@ -1,5 +1,4 @@
 import { createServerSupabaseClient } from '@/lib/supabase/server'
-import { Database } from '@/types/supabase'
 import { NextResponse } from 'next/server'
 
 // GET - Get all settings
@@ -56,7 +55,6 @@ export async function PUT(request: Request) {
     const body = await request.json()
 
     // Update each setting
-    // @ts-ignore - Supabase type inference issue in strict mode
     const updates = Object.entries(body).map(([key, value]) =>
       supabase
         .from('settings')

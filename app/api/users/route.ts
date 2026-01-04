@@ -1,5 +1,4 @@
 import { createClient } from '@/lib/supabase/server'
-import { Database } from '@/types/supabase'
 import { NextResponse } from 'next/server'
 
 export async function POST(request: Request) {
@@ -42,7 +41,6 @@ export async function POST(request: Request) {
     }
 
     // Create profile entry
-    // @ts-ignore - Supabase type inference issue in strict mode
     const { error: profileError } = await supabase.from('profiles').insert({
       id: newUser.user.id,
       email,

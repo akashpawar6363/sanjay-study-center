@@ -1,5 +1,4 @@
 import { createClient } from '@/lib/supabase/server'
-import { Database } from '@/types/supabase'
 import { NextResponse } from 'next/server'
 import { sendEmail } from '@/lib/email/mailer'
 import { getAdmissionReceiptTemplate } from '@/lib/email/templates/admission-receipt'
@@ -88,7 +87,6 @@ export async function POST(request: Request) {
       }
 
       // Log email in database
-      // @ts-ignore - Supabase type inference issue in strict mode
       await supabase.from('email_logs').insert({
         admission_id: admissionId,
         email_type: type,

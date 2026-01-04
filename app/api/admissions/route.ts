@@ -1,5 +1,4 @@
 import { createServerSupabaseClient } from '@/lib/supabase/server'
-import { Database } from '@/types/supabase'
 import { NextResponse } from 'next/server'
 import { calculateRenewalDate } from '@/lib/utils/dateUtils'
 import { sendEmail } from '@/lib/email/mailer'
@@ -89,7 +88,6 @@ export async function POST(request: Request) {
       .single()
 
     // Create admission
-    // @ts-ignore - Supabase type inference issue in strict mode
     const { data: admission, error: admissionError } = await supabase
       .from('admissions')
       .insert({
@@ -118,7 +116,6 @@ export async function POST(request: Request) {
     }
 
     // Update receipt number
-    // @ts-ignore - Supabase type inference issue in strict mode
     await supabase
       .from('settings')
       .update({ value: nextNumber.toString() })

@@ -5,11 +5,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { createClient } from '@/lib/supabase/client'
-import { Database } from '@/types/supabase'
 import { useRouter } from 'next/navigation'
 import { Upload, X, User, FileSignature } from 'lucide-react'
 import Image from 'next/image'
-import { Profile } from '@/types/user.types'
 
 export default function ProfilePage() {
   const router = useRouter()
@@ -43,7 +41,7 @@ export default function ProfilePage() {
           .from('profiles')
           .select('*')
           .eq('id', user.id)
-          .single() as { data: Profile | null }
+          .single()
 
         if (profileData) {
           setProfile(profileData)
@@ -77,7 +75,6 @@ export default function ProfilePage() {
         return
       }
 
-      // @ts-ignore - Supabase type inference issue in strict mode
       const { error: updateError } = await supabase
         .from('profiles')
         .update({

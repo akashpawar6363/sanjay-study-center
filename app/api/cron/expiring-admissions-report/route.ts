@@ -1,5 +1,4 @@
 import { createClient } from '@/lib/supabase/server'
-import { Database } from '@/types/supabase'
 import { NextResponse } from 'next/server'
 import { sendEmail } from '@/lib/email/mailer'
 import { addDays, format } from 'date-fns'
@@ -219,7 +218,6 @@ export async function GET(request: Request) {
     }
 
     // Log email in database
-    // @ts-ignore - Supabase type inference issue in strict mode
     await supabase.from('email_logs').insert({
       email_type: 'admin_report',
       recipient_email: adminProfile.email,

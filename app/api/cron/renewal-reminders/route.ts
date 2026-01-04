@@ -1,5 +1,4 @@
 import { createClient } from '@/lib/supabase/server'
-import { Database } from '@/types/supabase'
 import { NextResponse } from 'next/server'
 import { sendEmail } from '@/lib/email/mailer'
 import { getRenewalReminderTemplate } from '@/lib/email/templates/renewal-reminder'
@@ -82,7 +81,6 @@ export async function GET(request: Request) {
       if (emailResult.success) {
         results.sent++
         // Log email in database
-        // @ts-ignore - Supabase type inference issue in strict mode
         await supabase.from('email_logs').insert({
           admission_id: admission.id,
           email_type: 'reminder',
@@ -93,7 +91,6 @@ export async function GET(request: Request) {
       } else {
         results.failed++
         // Log failed email
-        // @ts-ignore - Supabase type inference issue in strict mode
         await supabase.from('email_logs').insert({
           admission_id: admission.id,
           email_type: 'reminder',
