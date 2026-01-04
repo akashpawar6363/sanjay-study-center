@@ -13,10 +13,14 @@ export default async function AdmissionsPage() {
     data: { user },
   } = await supabase.auth.getUser()
 
+  if (!user) {
+    return <div>Unauthorized</div>
+  }
+
   const { data: profile } = await supabase
     .from('profiles')
     .select('*')
-    .eq('id', user?.id)
+    .eq('id', user.id)
     .single()
 
   // Get all admissions with category details
