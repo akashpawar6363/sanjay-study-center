@@ -24,7 +24,7 @@ export default async function DashboardPage() {
   // Get total revenue
   const { data: revenueData } = await supabase
     .from('admissions')
-    .select('fees')
+    .select('fees') as { data: { fees: number }[] | null }
 
   const totalRevenue = revenueData?.reduce((sum, admission) => sum + admission.fees, 0) || 0
 
@@ -33,7 +33,7 @@ export default async function DashboardPage() {
     .from('settings')
     .select('value')
     .eq('key', 'total_seats')
-    .single()
+    .single() as { data: { value: string } | null }
 
   const totalSeats = parseInt(seatsSetting?.value || '50')
   const occupiedSeats = activeAdmissions || 0
@@ -69,7 +69,7 @@ export default async function DashboardPage() {
       .from('admissions')
       .select('fees')
       .gte('admission_date', monthStart.toISOString().split('T')[0])
-      .lte('admission_date', monthEnd.toISOString().split('T')[0])
+      .lte('admission_date', monthEnd.toISOString().split('T')[0]) as { data: { fees: number }[] | null }
 
     const revenue = monthData?.reduce((sum, admission) => sum + admission.fees, 0) || 0
 
