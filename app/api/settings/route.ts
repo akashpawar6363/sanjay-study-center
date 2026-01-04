@@ -1,4 +1,5 @@
 import { createServerSupabaseClient } from '@/lib/supabase/server'
+import { Database } from '@/types/supabase'
 import { NextResponse } from 'next/server'
 
 // GET - Get all settings
@@ -58,7 +59,7 @@ export async function PUT(request: Request) {
     const updates = Object.entries(body).map(([key, value]) =>
       supabase
         .from('settings')
-        .update({ value: String(value), updated_at: new Date().toISOString() })
+        .update<Database['public']['Tables']['settings']['Update']>({ value: String(value), updated_at: new Date().toISOString() })
         .eq('key', key)
     )
 

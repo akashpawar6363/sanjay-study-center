@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
+import { Database } from '@/types/supabase'
 import { NextResponse } from 'next/server'
 
 export async function POST(request: Request) {
@@ -41,7 +42,7 @@ export async function POST(request: Request) {
     }
 
     // Create profile entry
-    const { error: profileError } = await supabase.from('profiles').insert({
+    const { error: profileError } = await supabase.from('profiles').insert<Database['public']['Tables']['profiles']['Insert']>({
       id: newUser.user.id,
       email,
       full_name,

@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
+import { Database } from '@/types/supabase'
 import { NextResponse } from 'next/server'
 import { sendEmail } from '@/lib/email/mailer'
 import { addDays, format } from 'date-fns'
@@ -218,7 +219,7 @@ export async function GET(request: Request) {
     }
 
     // Log email in database
-    await supabase.from('email_logs').insert({
+    await supabase.from('email_logs').insert<Database['public']['Tables']['email_logs']['Insert']>({
       email_type: 'admin_report',
       recipient_email: adminProfile.email,
       status: 'sent',

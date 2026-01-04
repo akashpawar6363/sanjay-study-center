@@ -1,4 +1,5 @@
 import { createServerSupabaseClient } from '@/lib/supabase/server'
+import { Database } from '@/types/supabase'
 import { NextResponse } from 'next/server'
 
 // GET - List all categories
@@ -51,7 +52,7 @@ export async function POST(request: Request) {
 
     const { data: category, error } = await supabase
       .from('categories')
-      .insert({
+      .insert<Database['public']['Tables']['categories']['Insert']>({
         name: body.name,
         rate: body.rate,
         is_default: false,
@@ -99,7 +100,7 @@ export async function PUT(request: Request) {
 
     const { data: category, error } = await supabase
       .from('categories')
-      .update({
+      .update<Database['public']['Tables']['categories']['Update']>({
         name: body.name,
         rate: body.rate,
         updated_at: new Date().toISOString(),
@@ -165,7 +166,7 @@ export async function DELETE(request: Request) {
       )
     }
 
-    const { error } = await supabase.from('categories').delete().eq('id', id)
+    const { error } = await supabase.from('categories').delete<Database['public']['Tables']['categories']['Row']>().eq('id', id)
 
     if (error) {
       console.error('Error deleting category:', error)

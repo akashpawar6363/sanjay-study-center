@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
+import { Database } from '@/types/supabase'
 import { NextResponse } from 'next/server'
 import { sendEmail } from '@/lib/email/mailer'
 import { getAdmissionReceiptTemplate } from '@/lib/email/templates/admission-receipt'
@@ -87,7 +88,7 @@ export async function POST(request: Request) {
       }
 
       // Log email in database
-      await supabase.from('email_logs').insert({
+      await supabase.from('email_logs').insert<Database['public']['Tables']['email_logs']['Insert']>({
         admission_id: admissionId,
         email_type: type,
         recipient: admission.email,

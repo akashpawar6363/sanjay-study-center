@@ -1,4 +1,5 @@
 import { createServerSupabaseClient } from '@/lib/supabase/server'
+import { Database } from '@/types/supabase'
 import { NextResponse } from 'next/server'
 import { calculateRenewalDate } from '@/lib/utils/dateUtils'
 import { sendEmail } from '@/lib/email/mailer'
@@ -90,7 +91,7 @@ export async function POST(request: Request) {
     // Create admission
     const { data: admission, error: admissionError } = await supabase
       .from('admissions')
-      .insert({
+      .insert<Database['public']['Tables']['admissions']['Insert']>({
         seat_no: body.seat_no,
         category_id: body.category_id,
         receipt_no: receiptNo,
@@ -118,7 +119,7 @@ export async function POST(request: Request) {
     // Update receipt number
     await supabase
       .from('settings')
-      .update({ value: nextNumber.toString() })
+      .update<Database['public']['Tables']['settings']['Update']>({ value: nextNumber.toString() })
       .eq('key', 'current_receipt_number')
 
     // Send admission receipt email

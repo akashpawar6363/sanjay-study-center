@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
+import { Database } from '@/types/supabase'
 import { NextResponse } from 'next/server'
 
 export async function POST(request: Request) {
@@ -88,7 +89,7 @@ export async function POST(request: Request) {
 
     const { error: updateError } = await supabase
       .from('profiles')
-      .update({
+      .update<Database['public']['Tables']['profiles']['Update']>({
         [updateField]: publicUrl,
         updated_at: new Date().toISOString(),
       })
@@ -166,7 +167,7 @@ export async function DELETE(request: Request) {
 
     await supabase
       .from('profiles')
-      .update({
+      .update<Database['public']['Tables']['profiles']['Update']>({
         [updateField]: null,
         updated_at: new Date().toISOString(),
       })

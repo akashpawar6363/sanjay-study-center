@@ -1,4 +1,5 @@
 import { createServerSupabaseClient } from '@/lib/supabase/server'
+import { Database } from '@/types/supabase'
 import { NextResponse } from 'next/server'
 import { calculateRenewalDate } from '@/lib/utils/dateUtils'
 
@@ -80,7 +81,7 @@ export async function PUT(
     // Update admission
     const { data: admission, error: updateError } = await supabase
       .from('admissions')
-      .update({
+      .update<Database['public']['Tables']['admissions']['Update']>({
         seat_no: body.seat_no,
         category_id: body.category_id,
         admission_date: body.admission_date,

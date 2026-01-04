@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { createClient } from '@/lib/supabase/client'
+import { Database } from '@/types/supabase'
 import { useRouter } from 'next/navigation'
 import { Upload, X, User, FileSignature } from 'lucide-react'
 import Image from 'next/image'
@@ -78,7 +79,7 @@ export default function ProfilePage() {
 
       const { error: updateError } = await supabase
         .from('profiles')
-        .update({
+        .update<Database['public']['Tables']['profiles']['Update']>({
           full_name: formData.full_name,
           updated_at: new Date().toISOString(),
         })
