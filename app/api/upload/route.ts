@@ -89,10 +89,10 @@ export async function POST(request: Request) {
 
     const { error: updateError } = await supabase
       .from('profiles')
-      .update<Database['public']['Tables']['profiles']['Update']>({
+      .update({
         [updateField]: publicUrl,
         updated_at: new Date().toISOString(),
-      })
+      } as any)
       .eq('id', userId)
 
     if (updateError) {
@@ -167,10 +167,10 @@ export async function DELETE(request: Request) {
 
     await supabase
       .from('profiles')
-      .update<Database['public']['Tables']['profiles']['Update']>({
+      .update({
         [updateField]: null,
         updated_at: new Date().toISOString(),
-      })
+      } as any)
       .eq('id', userId)
 
     return NextResponse.json({ message: 'File deleted successfully' })

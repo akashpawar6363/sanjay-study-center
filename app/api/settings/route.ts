@@ -59,7 +59,7 @@ export async function PUT(request: Request) {
     const updates = Object.entries(body).map(([key, value]) =>
       supabase
         .from('settings')
-        .update<Database['public']['Tables']['settings']['Update']>({ value: String(value), updated_at: new Date().toISOString() })
+        .update({ value: String(value), updated_at: new Date().toISOString() } as any)
         .eq('key', key)
     )
 

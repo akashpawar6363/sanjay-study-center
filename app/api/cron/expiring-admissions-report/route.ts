@@ -219,11 +219,11 @@ export async function GET(request: Request) {
     }
 
     // Log email in database
-    await supabase.from('email_logs').insert<Database['public']['Tables']['email_logs']['Insert']>({
+    await supabase.from('email_logs').insert({
       email_type: 'admin_report',
       recipient_email: adminProfile.email,
       status: 'sent',
-    })
+    } as any)
 
     return NextResponse.json({
       message: 'Expiring admissions report sent to admin',

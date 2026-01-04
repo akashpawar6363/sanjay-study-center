@@ -88,13 +88,13 @@ export async function POST(request: Request) {
       }
 
       // Log email in database
-      await supabase.from('email_logs').insert<Database['public']['Tables']['email_logs']['Insert']>({
+      await supabase.from('email_logs').insert({
         admission_id: admissionId,
         email_type: type,
         recipient: admission.email,
         subject: emailSubject,
         status: 'sent',
-      })
+      } as any)
 
       return NextResponse.json({
         message: 'Email sent successfully',

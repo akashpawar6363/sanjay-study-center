@@ -79,10 +79,10 @@ export default function ProfilePage() {
 
       const { error: updateError } = await supabase
         .from('profiles')
-        .update<Database['public']['Tables']['profiles']['Update']>({
+        .update({
           full_name: formData.full_name,
           updated_at: new Date().toISOString(),
-        })
+        } as any)
         .eq('id', user.id)
 
       if (updateError) {

@@ -81,7 +81,7 @@ export async function PUT(
     // Update admission
     const { data: admission, error: updateError } = await supabase
       .from('admissions')
-      .update<Database['public']['Tables']['admissions']['Update']>({
+      .update({
         seat_no: body.seat_no,
         category_id: body.category_id,
         admission_date: body.admission_date,
@@ -94,7 +94,7 @@ export async function PUT(
         payment_mode: body.payment_mode,
         status: body.status,
         updated_at: new Date().toISOString(),
-      })
+      } as any)
       .eq('id', params.id)
       .select('*, category:categories(*)')
       .single()

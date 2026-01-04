@@ -42,12 +42,12 @@ export async function POST(request: Request) {
     }
 
     // Create profile entry
-    const { error: profileError } = await supabase.from('profiles').insert<Database['public']['Tables']['profiles']['Insert']>({
+    const { error: profileError } = await supabase.from('profiles').insert({
       id: newUser.user.id,
       email,
       full_name,
       role,
-    })
+    } as any)
 
     if (profileError) {
       // Rollback: delete the auth user if profile creation fails

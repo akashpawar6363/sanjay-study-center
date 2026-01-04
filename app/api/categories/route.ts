@@ -52,11 +52,11 @@ export async function POST(request: Request) {
 
     const { data: category, error } = await supabase
       .from('categories')
-      .insert<Database['public']['Tables']['categories']['Insert']>({
+      .insert({
         name: body.name,
         rate: body.rate,
         is_default: false,
-      })
+      } as any)
       .select()
       .single()
 
@@ -100,11 +100,11 @@ export async function PUT(request: Request) {
 
     const { data: category, error } = await supabase
       .from('categories')
-      .update<Database['public']['Tables']['categories']['Update']>({
+      .update({
         name: body.name,
         rate: body.rate,
         updated_at: new Date().toISOString(),
-      })
+      } as any)
       .eq('id', body.id)
       .select()
       .single()
@@ -166,7 +166,7 @@ export async function DELETE(request: Request) {
       )
     }
 
-    const { error } = await supabase.from('categories').delete<Database['public']['Tables']['categories']['Row']>().eq('id', id)
+    const { error } = await supabase.from('categories').delete().eq('id', id)
 
     if (error) {
       console.error('Error deleting category:', error)

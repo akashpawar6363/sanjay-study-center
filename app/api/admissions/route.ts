@@ -91,7 +91,7 @@ export async function POST(request: Request) {
     // Create admission
     const { data: admission, error: admissionError } = await supabase
       .from('admissions')
-      .insert<Database['public']['Tables']['admissions']['Insert']>({
+      .insert({
         seat_no: body.seat_no,
         category_id: body.category_id,
         receipt_no: receiptNo,
@@ -107,7 +107,7 @@ export async function POST(request: Request) {
         digital_signature_url: userProfile?.digital_signature_url,
         created_by: user.id,
         status: 'active',
-      })
+      } as any)
       .select('*, category:categories(*)')
       .single()
 
@@ -119,7 +119,7 @@ export async function POST(request: Request) {
     // Update receipt number
     await supabase
       .from('settings')
-      .update<Database['public']['Tables']['settings']['Update']>({ value: nextNumber.toString() })
+      .update({ value: nextNumber.toString() } as any)
       .eq('key', 'current_receipt_number')
 
     // Send admission receipt email
