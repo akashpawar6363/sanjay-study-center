@@ -22,7 +22,7 @@ export default async function AdmissionsPage() {
     .from('profiles')
     .select('*')
     .eq('id', user.id)
-    .single()
+    .single() as { data: Profile | null }
 
   if (!profile) {
     return <div>Profile not found</div>
